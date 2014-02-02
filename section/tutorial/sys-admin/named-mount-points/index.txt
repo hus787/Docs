@@ -1,6 +1,436 @@
+Javascript and Custom Layout Editor Related Questions
+-----------------------------------------------------
 
-Named Mount Points
-==================
+
+*Question*: Is there any way to run python code instead of javascript code in any widget in the table column definition?
+
+*Answer*: Define a JS script in TACTIC's script editor, the purpose of which is to run a python 
+script also in the script editor. The JS script would be something like:
+-----------------------------------
+var server = TacticServerStub.get();
+var rtn = server.execute_python_script('folder/python_script', kwargs) 
+// You can pass in kwargs, a dictionary of variables you want to pass in the python script
+-----------------------------------
+
+
+*Question*: Is it possible to run an external python script not in Tactic but on the server?
+
+*Answer*: One way to do this is to have a UI element activate a JS script in TACTIC, 
+which calls a python script in TACTIC, which opens a python subprocess to run your external script.
+
+1) Define a JS script in TACTIC's script editor, the purpose of which is to run a python 
+script also in the script editor. The JS script would be something like:
+------------------------------------
+var server = TacticServerStub.get();
+var rtn = server.execute_python_script('folder/python_script')
+------------------------------------
+
+2) Define a python script, called 'folder/python_script' in this example, 
+which calls your external python script via the command line. Ex:
+-----------------
+import subprocess
+subprocess.call(["python", "/tmp/test.py"])
+-----------------
+
+If your external script is supposed to return something, you can read the output with syntax similar to this:
+--------------------
+  import subprocess
+  popen = subprocess.Popen('python', '/tmp/test.py'], shell=False, stdout=subprocess.PIPE)
+  popen.wait()
+  output = ''
+  value = popen.communicate()
+  if value:
+    output = value[0].strip()
+    if not output:
+      err = value[1]
+      print err
+  return output
+-------------------
+
+In doing so, the JS script will also have the return value stored in the variable "rtn".
+
+
+*Question*:  How to load an external js file in custom layout editor. Where can you save the js file?
+
+*Answer*: You can  include some external js and make use of some of its key functions immediately 
+in the same call, you are required to put function definition within that function() { } block.
+ 
+In the HTML:
+--------
+<div>
+<div class="my_class"/>
+</div>
+--------------
+
+In the behavior: 
+-----------------------------
+<behavior class="my_class" event="load">
+var js_files = [
+"/assets/file_name_1.js", “/assets/file_name_2.js”
+];
+spt.dom.load_js(js_files , function() {
+   // you can call functions defined in those js files path
+require; define; // require, define are functions defined in those js_files path
+}
+</behavior>
+----------------------------------
+
+You can save the js file in tactic, there are three ways to do that:
+a) To get it working locally: you can put it in spt_js (not recommended because it is in TACTIC code), and load using:
+--------------------
+spt.dom.load_js(['/context/spt_js/file_name.js'], function() {
+--------------------
+
+b) You could also put it temporarily in the assets folder(This is mapped in apache to /assets/...) and load through:
+--------------------
+spt.dom.load_js(['/assets/file_name.js'], function() {
+--------------------
+
+c)  Create a plugin and put it in the plugin folder.  The plugin folder is mapped /plugins/…
+--------------------
+spt.dom.load_js(['mapped /plugins/file_name.js'], function() {
+--------------------
+
+
+*Question*: How do you load the item into a new tab as opposed to the main body?
+
+*Answer*: To load the item into a new tab as opposed to the main body, you need to call:
+--------------------
+spt.tab.set_main_body_tab();
+spt.tab.add_new(element_name, tab_title, class_name, kwargs);
+--------------------
+
+The tab code and function can be found in "src/tactic/ui/container/tab_wdg.py"
+
+
+*Question*: How do you add a new tab when there are multiple sets of tabs that can be added to? 
+
+*Answer*: If there are multiple sets of tabs (ex: a dashboard of tabs under a tab), you can decide which set to add a new tab to with code similar to the following:
+--------------------
+var tabs_el = bvr.src_el.getElement(".spt_tab_top");
+if (tabs_el) {
+  spt.tab.set_tab_top(tabs_el)
+  spt.tab.add_new(element_name, tab_title, class_name, kwargs);
+--------------------
+
+
+*Question*: How to load a specific view into the current tab?
+
+*Answer*:
+ 
+-------------------------
+var title = "Ticket List";
+var view = "ticket_list";
+var search_type = "scrum/ticket";
+
+var kwargs = {
+  'view': 'ticket_list',
+  'search_type': 'scrum/ticket' 
+}
+
+var class_name = "tactic.ui.panel.ViewPanelWdg";
+
+spt.tab.set_main_body_tab();
+spt.tab.load_selected(view, title, class_name, kwargs);
+--------------------------
+
+
+*Question*: Can you load a json file in Tactic through custom layout editor? Where can we save the file?
+
+*Answer*: Yes you can, using : 
+----------------------
+spt.json(“file_path”, function( )) {
+----------------------
+in a behavior (as this is a javascript function)  
+
+In TACTIC, the json file can be anywhere that is mapped by Apache. TACTIC 
+does have /assets mapped and /plugins (if you want to create a plugin). The 
+easiest way is just to create a folder in /assets and then use that path.
+
+
+*Question*: Say you have a custom script in the script editor to "centralize" 
+some code. How can you can call it from a number of different custom layout views.
+
+*Answer*: We don't have a great mechanism for this because it has to go to 
+the server to get the script every time.  It doesn't cache the code on the 
+server.  We have generally used .js files for central Javascript functions.
+
+We do have some code that is outside the api that may help in
+src/context/spt_s/custom_project.js
+but it is not part of our API.  We might map that into our API at some point, 
+however, it will help you in the short run:
+
+1)
+--------------------------
+var script = spt.CustomProject.get_script_by_path("test/my_script")
+var ret_val = eval(script);
+--------------------------
+
+This will return the last evaluated variable in "script".
+
+2) We do have another function:
+----------------------------
+spt.CustomProject.run_script_by_path(")
+----------------------------
+
+but it does a straight eval, which doesn't have an assumed return 
+value, so the first example is the best bet.
+
+
+*Question*: How can you connect sobjects automatically based on dependencies. Say 
+when you create new asset all those process(Task) should be connected automatically 
+based on pipeline.
+
+*Answer*:  The "connection" table in sthpw database is mainly used for arbitrary 
+connections between sobjects.  It is a generalized mechanism and not specific to 
+tasks: for example, it allows media to be attached to jobs or reference images attached
+ to shots.  It can be used to "connect" tasks together to show a dependency, but we 
+ have never used it as such.  
+
+It can be accomplished using a trigger and the script, but this is not the best way 
+store task dependency as a default. Data should be stored somewhere (ie: the depend_id 
+column may be too simple given the complexities of pipelines)  At this point, TACTIC 
+doesn't have a built-in generalized solution for this.  This is definitely something 
+that can be discussed and we can incorporate into the development schedule. 
+ 
+So for now, you can do this by having triggers. So say you can have an event for inserting 
+a new shot/asset which will run a script where you can create tasks and connect them to the sobject.
+
+You can look into triggers :
+http://community.southpawtech.com/tactic-setup_setup_project-automation-triggers.html
+
+Create sobject:
+http://community.southpawtech.com/python-client-api_general_insert.html
+
+Connect sobjects:
+http://community.southpawtech.com/python-client-api_general_connect_sobjects.html
+
+The example below might be helpful and JS script code will roughly be something similar:
+----------------------------------------
+var search_type = 'project/table_name';
+      var sobject = server.insert(search_type, data);
+      // Create a corresponding task.
+      task_type = "sthpw/task";
+      var task = server.insert(task_type, task_data, { parent_key.__search_key__} );
+      server.connect_sobjects(sobject, task, {context: "main_task"});
+-----------------------------------------
+
+
+*Question*: Load modes for CustomLayoutWdg ?
+
+*Answer*: We added two load modes to the CustomLayoutWdg available in Tactic 4.1+
+
+--------------------------------------
+<element view="my_view" load="async"/>
+<element view="my_view2" load="async"/>
+<element view="my_view3" load="async"/>
+<element view="my_view4" load="async"/>
+
+<element view="my_view" load="sequence"/>
+<element view="my_view2" load="sequence"/>
+<element view="my_view3" load="sequence"/>
+<element view="my_view4" load="sequence"/>
+---------------------------------------
+
+With "async", all will be loaded simultaneously.  With "sequence", 
+the will be loaded sequentially, meaning one load will not start 
+until the other finishes.  You can mix and match:
+
+--------------------------
+<element view="my_view"/>
+<element view="my_view2" load="async"/>
+<element view="my_view3" load="sequence"/>
+<element view="my_view4" load="sequence"/>
+--------------------------
+
+Here, #1, will be loaded with the page, #2 and 3 will be loaded 
+together (the first sequence item starts immediately with async) 
+and then #4 is loaded after #3 is finished.
+
+
+
+Expression Related Questions:
+-----------------------------
+
+
+*Question*: How to get the project url ex: https://VM_address/tactic/project_name?
+
+*Answer*: *$PROJECT_URL* is a python variable that will be evaluated by the server, so you can this directly.
+
+*Question*: How can we have a combination of several columns from a row as a label expression. 
+
+*Answer*: You can do that by using a single expression(works for both absolute and relative mode and 
+can have as many column values)
+For example: 
+----------------------------------------------------------------
+@SUBSTITUTE((%0.d - %s ….),@GET(table_name), @GET(table_name,...)
+-----------------------------------------------------------------
+
+*Question*: How can you create an expression column that uses the data from the current row and matches this against the full database?
+
+*Answer*: 
+1.  Send the id of the current sobject in the current table table to get a certain column and look for columns related to that in another table Table2 
+----------------------------
+@COUNT(oss_assets/table2['base_product', @GET(oss_assets/table1['id',$SOBJECT_ID].col_name)]) 
+----------------------------
+
+Note: Only available on Tactic 4.1+
+
+However this expression will still run in absolute mode and it will be way slower and will only work for 
+table expressions. . Here in this case, you don't need to mention the mode. But its use will still be 
+limited as it doesn't have the capability of dealing with the case you mentioned(matching first five 
+characters). It works for matching only equal strings.
+
+2. Better way is to use python widget and add a script path and write a python script for that.
+
+*Question*: How to get a list of parents for a list of task sobjects using API?
+
+*Answer*: 
+To get a list of tasks: 
+---------------
+tasks = server.eval("@SOBJECT(sthpw/task['search_type','film/shot?project=XYZ'])")
+---------------
+
+1. To get a list of parents corresponding to the list of tasks: 
+-------------
+parents = server.eval("@SOBJECT(parent)", tasks)
+-------------
+
+2. However for single task , you can also use:
+--------------
+server.get_parent(task.get('__search_key__'))
+--------------
+
+Avoid looping to get the list of parents for a task list. Use the previous expression for better speed 
+in this case. This is buggy at the moment and doesn’t work correctly for list of different task sobjects.
+
+
+
+Tactic UI Related Questions
+-----------------------------
+
+
+
+
+*Question*: How can we get all task search_key using trigger insert|sthpw/task?
+
+*Answer*:  The trigger is run for every trigger, so you don't need a list. It is passed 
+in through the "input" variable. There is an example here:
+
+http://community.southpawtech.com/content/how-write-python-trigger-tactic-script-editor
+
+Task.py does have some convenience functions, but it is not necessarily called to create every task. 
+The Task class is a wrapper class derived from SObject. Many functions will just use the lower level 
+SObject functionality to create tasks. Modifying the Task.py class is not going to get what you want 
+because these just contain helper functions that are sometimes convenient to use. A trigger is the 
+proper place to do what you want to do because it will be called every time an event occurs . In this 
+case "insert|sthpw/task" will be called *every* time a task is inserted. You can get the info the need 
+as specified in the doc link above.
+
+
+Tactic Table Related Questions
+-----------------------------
+
+*Question*: When you use expression in the column definition , can you pass sobject information explicitly?
+
+*Answer*: Yes, if the mode_expr is "relative". The parent_wdg of a column is TableLayoutWdg and
+for a row in a an edit pop up, the parent_wdg is EditWdg. You can pass in a search_key explicitly 
+if there is no parent_wdg and search_key(search key doesn’t exist for insert_search_key). 
+
+In the source code we have something like:
+-------------------------------------------------- 
+if mode_expr == 'relative':
+            	sobjects = my.sobjects
+            	if not sobjects:
+             	   parent_wdg = my.get_parent_wdg()
+                	if parent_wdg:
+                    	# use the search_key as a starting point if applicable
+                    	sk = parent_wdg.kwargs.get('search_key')
+                    	if sk:
+      	                  sobjects = [Search.get_by_search_key(sk)]
+                	else:
+                    	sk = my.kwargs.get('search_key')
+                    	if sk:
+                            sobjects = [Search.get_by_search_key(sk)]
+----------------------------------------------------
+
+*Question*: Can we pass sobject information through the column definition as an argument or 
+parameter to the js script being called in it?
+
+*Answer*: Not at the moment
+
+*Question*: In the edit mode, can you call a JS script?
+
+*Answer*: Yes. Pass the script location as an argument
+-------------------------------------------------------------
+ <element name="element_name" edit_script="JS Script Location">
+  <display class="SelectWdg">
+	<empty>true</empty>
+  </display>
+</element>
+------------------------------------------------------------
+
+
+*Question*: Can you retrieve sobject informations in the script called through edit_script ?
+
+*Answer*: We can’t use bvr.search_key because the source code doesn’t pass it in. This is a limitation at the moment.
+Passing bvr information here would be difficult.  There are many places where this function is called, 
+each with different behaviors.
+
+However, the "cell" is available to this method, so you can do:
+-------------------------------------------
+var row = spt.table.get_row_by_cell(cell);
+var search_key = row.getAttribute("spt_search_key");
+-------------------------------------------
+
+There are inconsistencies where it's basically random what a script receives.  At some point, we should conglomerate and standardize all of that.
+
+*Question*: In the view mode, can you call a JS script for a button widget?
+
+*Answer*: Yes. Pass the script location as
+
+------------------------------------------
+<script_path>js file location</script_path>
+------------------------------------------
+
+*Question*: Can you retrieve sobject information in the script passed as script_path 
+in view mode for button widget?
+
+*Answer*: Yes using var search_key = bvr.search_key in JS script
+
+*Question*: How can you add constraints to fields using Tactic?
+
+*Answer*:  For input validation refer to page 65 of the developer docs:
+http://community.southpawtech.com/sites/default/files/doc_tactic-developer_0.pdf
+
+
+
+
+Source Code Related Questions
+-----------------------------
+
+*Question*: Is there a  way to get the immediate dependent task id/s using a task's id?
+
+*Answer*: Yes
+
+-----------------------------------------------------------------------------
+ def get_dep(task):
+... expr = "@SOBJECT(sthpw/task['project_code','test777']['id','{}'])".format(task)
+... task_dict = server.eval(expr)[0]
+... search_task = Search(Task)
+... search_task.add_filter("id", task_dict['id'])
+... task_sobjects = search_task.get_sobjects()
+... task_sobject = task_sobjects[0]
+... task_pipeline = task_sobject.get_pipeline()
+... task_input_tasks = task_sobject.get_input_tasks()
+... task_depend =[]
+... for each in task_input_tasks:
+... task_depend.append(each.get_id())
+... return task_depend
+-------------------------------------------------------------------------------------
+
+
+
 
 
 

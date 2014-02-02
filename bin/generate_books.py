@@ -43,7 +43,8 @@ def find_media(base_dir):
 books = [
     'tactic-developer',
     'tactic-end-user',
-    'tactic-setup'
+    'tactic-setup',
+    'tactic-tutorial'
 ]
 
 
