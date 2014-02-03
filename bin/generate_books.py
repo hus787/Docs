@@ -20,7 +20,8 @@ if not os.path.exists(build_dir):
 books = [
     'tactic-developer',
     'tactic-end-user',
-    'tactic-setup'
+    'tactic-setup',
+    'tactic-tutorial'
 ]
 
 
