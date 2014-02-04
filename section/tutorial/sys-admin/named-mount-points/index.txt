@@ -34,17 +34,17 @@ subprocess.call(["python", "/tmp/test.py"])
 
 If your external script is supposed to return something, you can read the output with syntax similar to this:
 --------------------
----import subprocess
----popen = subprocess.Popen('python', '/tmp/test.py'], shell=False, stdout=subprocess.PIPE)
----popen.wait()
----output = ''
----value = popen.communicate()
----if value:
-------output = value[0].strip()
-------if not output:
----------err = value[1]
----------print err
----return output
+  import subprocess
+  popen = subprocess.Popen('python', '/tmp/test.py'], shell=False, stdout=subprocess.PIPE)
+  popen.wait()
+  output = ''
+  value = popen.communicate()
+  if value:
+    output = value[0].strip()
+    if not output:
+      err = value[1]
+      print err
+  return output
 -------------------
 
 In doing so, the JS script will also have the return value stored in the variable "rtn".
@@ -97,10 +97,21 @@ spt.dom.load_js(['mapped /plugins/file_name.js'], function() {
 *Answer*: To load the item into a new tab as opposed to the main body, you need to call:
 --------------------
 spt.tab.set_main_body_tab();
-spt.tab.add_new(element_name, title, class_name, kwargs);
+spt.tab.add_new(element_name, tab_title, class_name, kwargs);
 --------------------
 
 The tab code and function can be found in "src/tactic/ui/container/tab_wdg.py"
+
+
+*Question*: How do you add a new tab when there are multiple sets of tabs that can be added to? 
+
+*Answer*: If there are multiple sets of tabs (ex: a dashboard of tabs under a tab), you can decide which set to add a new tab to with code similar to the following:
+--------------------
+var tabs_el = bvr.src_el.getElement(".spt_tab_top");
+if (tabs_el) {
+  spt.tab.set_tab_top(tabs_el)
+  spt.tab.add_new(element_name, tab_title, class_name, kwargs);
+--------------------
 
 
 *Question*: How to load a specific view into the current tab?
