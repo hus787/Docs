@@ -317,6 +317,82 @@ case "insert|sthpw/task" will be called *every* time a task is inserted. You can
 as specified in the doc link above.
 
 
+*Question*: How do you add a new button to the task view(which is in asset and shot of project vfx), 
+but in "Manage sTypes" ?
+
+*Answer*: You can do that in any task view, like project tasks, right click on the column header and 
+choose "create new column ". You have a choice for button widget there.
+
+
+*Question*: How can you customize weekends?
+
+*Answer*: As of Tactic 4.1, we only support customizing the display for weekend in the Gantt Element 
+Widget and you can’t modify the number of working days. Its hard coded to 5days default. For display, 
+you can pick the start of the week using the Edit Column Manager and it will automatically set the two 
+previous days as weekend. So say you choose start day as Monday, then weekends are Saturday and Sunday. 
+If you choose start day as Wednesday, then weekend is Monday and Tuesday.
+
+image:media/gannt_chart_edit_column_definition.png[image]
+
+Work Element Widget(work hour column in the table) and has nothing to do with Gantt Element Widget
+(task Schedule column). However, the work element widget still doesn't support the flexible weekends 
+and its not linked to Gantt Element widget in any way. Its only the Gantt Element widget that we modified 
+for customizing weekends. So if you modify the weekends in the Gantt element widget, they won't be reflected 
+in the Work Element Widget.
+Unfortunately , at this point we don't support it for Work Element Widget.
+
+
+*Question*: Is there is any translation for other languages for TACTIC UI? 
+
+*Answer*:  There are two interfaces in Tactic:
+
+1. *Administrative interface*: This interface supports only English at the moment and it requires 
+some work to "internationalize" in order to accommodate other languages.
+
+2. *Interface built using Custom layout editor (available in TACTIC 4.0+)*: This interface can be themed 
+with any load and feel in any language.
+
+
+*Question*: Is there a way to clone/copy a project in Tactic? 
+
+*Answer*: Yes, you can use Template projects. If a project wasn’t made a template at the 
+time of creation follow the steps below:
+
+-> Go under Projects and select the Template option under Is Template column for the project 
+you wish to clone and hit save
+-> Go under the Template Projects and update the Template by Clicking the Update icon under Update column.
+-> The project you made the template of should appear in the option. Use the this project template 
+when you create the new project( http://community.southpawtech.com/tactic-setup_setup_create-new-project.html). 
+It will be a copy of that project. 
+
+*Note*: Template projects don't copy the data, just the configuration.  If you want to the full data, 
+the best is to just dump the database and import it on another server.  You shouldn't do tests on a production server.
+
+
+Question related to videos and file checkins
+---------------------------------------------
+
+*Question*: Checkin files under vfx project and generate the thumbnail 
+using the generate_video_thumbnail script using FFMPEG?
+
+*Answer*: There are a few issues with generate_video_thumbnail script.
+
+What to check for: 
+
+1) the thumb_path variable is hardcoded to a folder which doesn't exist. We generally 
+use the "get_tmp_dir" from Tactic's Environment class (under pyasm/common) method to get 
+a temporary folder to use for operations like this instead.
+
+2) The path variable gets the incorrect path. add the mode="lib" argument to the 
+get_path_from_snapshot function for the server path.
+
+3) Even with the above, FFMPEG won’t generate the temporary thumbnail because the script is buggy. 
+You need go through FFMPEG documentation and fix the script.
+
+Alternate solution is to not use the script. In that case,  the checkin happens fine but the thumbnail has to be generated separately.
+
+
+
 Tactic Table Related Questions
 -----------------------------
 
@@ -404,20 +480,49 @@ Source Code Related Questions
 
 -----------------------------------------------------------------------------
  def get_dep(task):
-... expr = "@SOBJECT(sthpw/task['project_code','test777']['id','{}'])".format(task)
-... task_dict = server.eval(expr)[0]
-... search_task = Search(Task)
-... search_task.add_filter("id", task_dict['id'])
-... task_sobjects = search_task.get_sobjects()
-... task_sobject = task_sobjects[0]
-... task_pipeline = task_sobject.get_pipeline()
-... task_input_tasks = task_sobject.get_input_tasks()
-... task_depend =[]
-... for each in task_input_tasks:
-... task_depend.append(each.get_id())
-... return task_depend
+	expr = "@SOBJECT(sthpw/task['project_code','test777']['id','{}'])".format(task)
+	task_dict = server.eval(expr)[0]
+	search_task = Search(Task)
+	search_task.add_filter("id", task_dict['id'])
+	task_sobjects = search_task.get_sobjects()
+	task_sobject = task_sobjects[0]
+	task_pipeline = task_sobject.get_pipeline()
+	task_input_tasks = task_sobject.get_input_tasks()
+	task_depend =[]
+	for each in task_input_tasks:
+	task_depend.append(each.get_id())
+	return task_depend
 -------------------------------------------------------------------------------------
 
+
+*Question*: Which module is called when a sign in is done? 
+
+*Answer*: Under pyasm/security you can find security.py and authenticate.py.
+The login_user function under the Security class in security.py logs in the user, 
+authenticating using the TacticAuthenticate class in authenticate.py.
+
+
+*Question*: If I have the ids of  specific tasks of a project, how can I get the related notes?
+
+*Answer*: Although the notes look at though they are connected directly, they are actually connected 
+through the parent.  They are then filtered by the same process as the task.  So the basic example would be:
+
+----------------------------
+@SOBJECT(parent.sthpw/note)
+----------------------------
+
+This will get all notes for the parent.  To filter, it will depend on where they are using the expression but it will be something like:
+
+----------------------------
+@SOBJECT(parent.sthpw/note['process', @GET(.process)])
+----------------------------
+
+The @GET(.process) in the filter will get the process value from the relative sObject (the task in this case) or
+If in code and the process is known:
+
+----------------------------
+@SOBJECT(parent.sthpw/note['process', 'something'])
+----------------------------
 
 
 
