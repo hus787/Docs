@@ -248,6 +248,78 @@ together (the first sequence item starts immediately with async)
 and then #4 is loaded after #3 is finished.
 
 
+*Question*: When you use expression in the column definition , can you pass sobject information explicitly?
+
+*Answer*: Yes, if the mode_expr is "relative". The parent_wdg of a column is TableLayoutWdg and
+for a row in a an edit pop up, the parent_wdg is EditWdg. You can pass in a search_key explicitly 
+if there is no parent_wdg and search_key(search key doesn’t exist for insert_search_key). 
+
+In the source code we have something like:
+-------------------------------------------------- 
+if mode_expr == 'relative':
+            	sobjects = my.sobjects
+            	if not sobjects:
+             	   parent_wdg = my.get_parent_wdg()
+                	if parent_wdg:
+                    	# use the search_key as a starting point if applicable
+                    	sk = parent_wdg.kwargs.get('search_key')
+                    	if sk:
+      	                  sobjects = [Search.get_by_search_key(sk)]
+                	else:
+                    	sk = my.kwargs.get('search_key')
+                    	if sk:
+                            sobjects = [Search.get_by_search_key(sk)]
+----------------------------------------------------
+
+*Question*: Can we pass sobject information through the column definition as an argument or 
+parameter to the js script being called in it?
+
+*Answer*: Not at the moment
+
+*Question*: In the edit mode, can you call a JS script?
+
+*Answer*: Yes. Pass the script location as an argument
+-------------------------------------------------------------
+ <element name="element_name" edit_script="JS Script Location">
+  <display class="SelectWdg">
+	<empty>true</empty>
+  </display>
+</element>
+------------------------------------------------------------
+
+
+*Question*: Can you retrieve sobject informations in the script called through edit_script ?
+
+*Answer*: We can’t use bvr.search_key because the source code doesn’t pass it in. This is a limitation at the moment.
+Passing bvr information here would be difficult.  There are many places where this function is called, 
+each with different behaviors.
+
+However, the "cell" is available to this method, so you can do:
+-------------------------------------------
+var row = spt.table.get_row_by_cell(cell);
+var search_key = row.getAttribute("spt_search_key");
+-------------------------------------------
+
+There are inconsistencies where it's basically random what a script receives.  At some point, we should conglomerate and standardize all of that.
+
+*Question*: In the view mode, can you call a JS script for a button widget?
+
+*Answer*: Yes. Pass the script location as
+
+------------------------------------------
+<script_path>js file location</script_path>
+------------------------------------------
+
+*Question*: Can you retrieve sobject information in the script passed as script_path 
+in view mode for button widget?
+
+*Answer*: Yes using var search_key = bvr.search_key in JS script
+
+*Question*: How can you add constraints to fields using Tactic?
+
+*Answer*:  For input validation refer to page 65 of the developer docs:
+http://community.southpawtech.com/sites/default/files/doc_tactic-developer_0.pdf
+
 
 Expression Related Questions:
 -----------------------------
@@ -380,7 +452,7 @@ It will be a copy of that project.
 the best is to just dump the database and import it on another server.  You shouldn't do tests on a production server.
 
 
-Question related to videos and file checkins
+Questions related to videos and file checkins
 ---------------------------------------------
 
 *Question*: Checkin files under vfx project and generate the thumbnail 
@@ -407,77 +479,13 @@ Alternate solution is to not use the script. In that case,  the checkin happens 
 Tactic Table Related Questions
 -----------------------------
 
-*Question*: When you use expression in the column definition , can you pass sobject information explicitly?
+*Question*: How can you disable the edit option for a column?
 
-*Answer*: Yes, if the mode_expr is "relative". The parent_wdg of a column is TableLayoutWdg and
-for a row in a an edit pop up, the parent_wdg is EditWdg. You can pass in a search_key explicitly 
-if there is no parent_wdg and search_key(search key doesn’t exist for insert_search_key). 
+*Answer*: For this there are 2 options:
 
-In the source code we have something like:
--------------------------------------------------- 
-if mode_expr == 'relative':
-            	sobjects = my.sobjects
-            	if not sobjects:
-             	   parent_wdg = my.get_parent_wdg()
-                	if parent_wdg:
-                    	# use the search_key as a starting point if applicable
-                    	sk = parent_wdg.kwargs.get('search_key')
-                    	if sk:
-      	                  sobjects = [Search.get_by_search_key(sk)]
-                	else:
-                    	sk = my.kwargs.get('search_key')
-                    	if sk:
-                            sobjects = [Search.get_by_search_key(sk)]
-----------------------------------------------------
+1) For the column, Edit the column definition and in the edit tab, un-check edit which will disallow editing in the table and remove the code field from the edit view.
 
-*Question*: Can we pass sobject information through the column definition as an argument or 
-parameter to the js script being called in it?
-
-*Answer*: Not at the moment
-
-*Question*: In the edit mode, can you call a JS script?
-
-*Answer*: Yes. Pass the script location as an argument
--------------------------------------------------------------
- <element name="element_name" edit_script="JS Script Location">
-  <display class="SelectWdg">
-	<empty>true</empty>
-  </display>
-</element>
-------------------------------------------------------------
-
-
-*Question*: Can you retrieve sobject informations in the script called through edit_script ?
-
-*Answer*: We can’t use bvr.search_key because the source code doesn’t pass it in. This is a limitation at the moment.
-Passing bvr information here would be difficult.  There are many places where this function is called, 
-each with different behaviors.
-
-However, the "cell" is available to this method, so you can do:
--------------------------------------------
-var row = spt.table.get_row_by_cell(cell);
-var search_key = row.getAttribute("spt_search_key");
--------------------------------------------
-
-There are inconsistencies where it's basically random what a script receives.  At some point, we should conglomerate and standardize all of that.
-
-*Question*: In the view mode, can you call a JS script for a button widget?
-
-*Answer*: Yes. Pass the script location as
-
-------------------------------------------
-<script_path>js file location</script_path>
-------------------------------------------
-
-*Question*: Can you retrieve sobject information in the script passed as script_path 
-in view mode for button widget?
-
-*Answer*: Yes using var search_key = bvr.search_key in JS script
-
-*Question*: How can you add constraints to fields using Tactic?
-
-*Answer*:  For input validation refer to page 65 of the developer docs:
-http://community.southpawtech.com/sites/default/files/doc_tactic-developer_0.pdf
+2) If you edit the column definition, in the edit tab make sure the widget is set to TextWdg. Then set the read_only option to true.
 
 
 
