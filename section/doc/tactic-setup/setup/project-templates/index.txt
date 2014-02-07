@@ -12,7 +12,7 @@ following internal structure will be copied over:
 
 |*pipeline* and *task statuses* |[multiblock cell omitted]
 
-|*notifications* and *triggers* |The *notificaions*and *triggers*are
+|*notifications* and *triggers* |The *notifications*and *triggers*are
 copied over from the template.
 
 |*sidebar* |The links of the views in the sidebar are copied over from
@@ -44,6 +44,6 @@ ________________________________________________________________________________
 After a new project is created based on a template, any changes made to
 the template will not affect the new project.
 
-ie. only the structure that existed in the template at the time the
+i.e. only the structure that existed in the template at the time the
 project was created will be used
 _____________________________________________________________________________________________________________________

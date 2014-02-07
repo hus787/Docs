@@ -335,7 +335,7 @@ Expression Related Questions:
 can have as many column values)
 For example: 
 ----------------------------------------------------------------
-@SUBSTITUTE((%0.d - %s ….),@GET(table_name), @GET(table_name,...)
+@SUBSTITUTE((%0.d - %s ….),@GET(table_name/column_name), @GET(table_name/column_name),...)
 -----------------------------------------------------------------
 
 *Question*: How can you create an expression column that uses the data from the current row and matches this against the full database?
@@ -544,6 +544,41 @@ If in code and the process is known:
 ----------------------------
 
 
+New features TACTIC 4.2:
+------------------------
 
+*i. Ability to set multiple sandboxes and multiple repo locations*
+
+We have added the ability to set multiple sandboxes and multiple repo locations.  
+They can be set for any naming convention using the sandbox_dir_alias and base_dir_alias 
+columns in the naming table.  The values are "aliases" to the file-system, making it easy 
+to systems people to remap to other base folders.  The sandbox_dir_alias column can contain "|" 
+separated values to provide an optional list of sandboxes to work in.  Alternatively "__all__" 
+will list all of the available paths and leaving it empty will use "default".  It is backwards 
+compatible so former configurations with just the value will work as before.  You can see this 
+optional selection in the check-in/out widget.
+
+An example for config setting is shown below:
+
+--------------------------------------------
+    <asset_base_dir>{
+        "default": "/home/tactic/assets",
+        "second": "/home/tactic/assets2",
+        "third": "/home/tactic/assets3"
+    }</asset_base_dir>
+
+    <web_base_dir>{
+        "default": "/assets",
+        "second": "/data/assets/second",
+        "third": "/data/assets/third"
+    }</web_base_dir>
+    <win32_sandbox_dir>{
+        "default": "C:/spt/sandbox",
+        "fast": "C:/Data/Test/FAST",
+        "slow": "C:/Data/Test/SLOW",
+        "ftp": "C:/Data/Test/FTP",
+        "remote": "C:/Data/Test/REMOTE"
+    }</win32_sandbox_dir>
+--------------------------------------------
 
 
