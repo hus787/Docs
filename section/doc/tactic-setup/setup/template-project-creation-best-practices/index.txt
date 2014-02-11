@@ -1,0 +1,165 @@
+Template Project Creation Best Practices
+----------------------------------------
+
+
+How to create a template project in 3.8.0.rc04 and above.
+
+*Making a Distributable TACTIC Template Project*
+
+TACTIC has the capacity to create custom distributable project types.  
+The configuration database can be exported from an existing project and 
+then re-importing that into another TACTIC installation.  This project will 
+then become a template to reuse for other projects.
+
+*Namespace Conflicts*
+
+The most important consideration for creating an exportable project template is 
+namespace issues.  It is vital that there is virtually no chance that a project 
+template will conflict with existing projects in a TACTIC installation.
+
+Most of the project definition occurs in the config tables within a project’s database.  
+These are trivial to export and do not pose any problems with conflicts.
+
+However, there are a number of tables that are still shared amongst all the projects.  
+It is these tables that run the risk of conflicting with other existing projects.  The 
+tables that are needed for configuration that can be used in defining a project are:
+ 
+
+1) project
+
+2) project_type
+
+3) schema
+
+4) search_object
+
+5) pipeline
+
+6) login_group
+
+7) notification
+
+___________________________________________________________________________________________________________________________________________________________
+*Note*
+
+At present, it is not possible to create a template with custom columns on any of these search types.
+___________________________________________________________________________________________________________________________________________________________
+
+
+
+*Approach*:
+
+The first step is to decide on a prefix that will be unique.  Generally, the prefix will be a 
+short identifier for the project/facility/company and will be used to prepend data in all 
+important identifying columns.  Using your own company name, for example, 
+for the template is a good convention.  Southpaw uses the prefix “spt”.  
+
+*Checklist*:
+
+The following is a checklist that should be used to ensure that a project will not 
+conflict.  For example, the TACTIC Scrum project is used.
+
+1) project:
+
+The “code” column will need to be unique and should have the prefix prepended to the project code..  For example, the TACTIC scrum project template has the project code of “spt_scrum”.  The “type” column should be the same as the “code” column because this project is the template and defines the “type” of project.
+
+-----------------
+code = “spt_scrum”
+type = “spt_scrum”
+-----------------
+
+2) schema
+
+The schema “code” column should be the same as above in the project “code” column.
+
+------------------
+code = “spt_scrum”
+------------------
+
+3) project_type:
+
+The project_type code should be the same as the project code
+
+------------------
+code = “spt_scrum”
+------------------
+
+4) search_object:
+
+The search_object namespace needs to equal the project code.  This is by convention.  Also 
+all the “search_type” column should be prepended with the namespace
+
+------------------------
+namespace = “spt_scrum”
+search_type = “spt_scrum/ticket”
+------------------------
+
+5) pipeline:
+
+The code of the pipeline should be prepended with the project code.
+
+-------------------------------
+code = “spt_scrum/ticket_status”
+-------------------------------
+
+6) login_group:
+
+All groups need to be prepended with the with the project type:
+
+-----------------------------------
+login_group = “spt_scrum/supervisor
+-----------------------------------
+
+Following these simple rules, it will be possible to export a project as a template 
+and then reimport it into any existing TACTIC installation.
+
+How to Prepare A Project To Become A Template:
+
+a) In the Sidebar, go to:
+ 
+Database Views -> Global Config/Data -> Project Types
+ 
+b) Look through the entries in the column named code. Verify that the project to export exists 
+in this list. If it does not exist:
+
+i) Add a new Project Type entry with the project code as the code.
+     
+ 
+For example:
+------------------
+code: toy_factory
+base_type: simple
+------------------
+
+c) Next, in the Sidebar go:
+Admin Views -> Global -> Projects
+ 
+d) Find the project to export, look at the column named: type
+
+e) Verify that the column named type is the same as the code entered into the Project Type table.
+
+For the example above, use:
+type: toy_factory
+
+f) Go to  *Project > Project Schema* (which is the same view as the link found under:
+Advanced Project Setup > Create Schema)
+
+g) In the panel at the bottom named: sType List, change the value in the column named: database to:
+
+ {project}
+ 
+The significance of this type "toy_factory" is that it corresponds to the prefix of all the 
+sTypes you have created in the original projects e.g. toy_factory/part,  toy_factory/package. It 
+ensures these related sTypes are copied to the template project.
+
+To actually save out the template project zip file
+ 
+
+1) Follow the above guidelines.
+
+2) In the Global > Projects Tab, check the checkbox for a project you want to turn into a template.
+
+3) It will then appear in Global > Template Projects tab. In the Template Projects tab, you will 
+see an Update button for each project. Clicking on it saves the corresponding project as a template 
+zip file ready to be imported. If there is an existing one, it will be saved over. It is saved 
+in <TACTIC_DATA_DIR>/templates.
