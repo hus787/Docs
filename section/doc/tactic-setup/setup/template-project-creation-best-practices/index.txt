@@ -113,7 +113,7 @@ login_group = “spt_scrum/supervisor
 Following these simple rules, it will be possible to export a project as a template 
 and then reimport it into any existing TACTIC installation.
 
-How to Prepare A Project To Become A Template:
+*How to Prepare A Project To Become A Template:*
 
 a) In the Sidebar, go to:
  

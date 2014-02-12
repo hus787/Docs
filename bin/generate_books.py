@@ -21,6 +21,7 @@ books = [
     'tactic-developer',
     'tactic-end-user',
     'tactic-setup',
+    'tactic-quickstart',
     'tactic-tutorial'
 ]
 
