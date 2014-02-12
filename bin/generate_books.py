@@ -44,6 +44,7 @@ books = [
     'tactic-developer',
     'tactic-end-user',
     'tactic-setup',
+    'tactic-sys-admin',
     'tactic-quickstart',
     'tactic-tutorial'
 ]

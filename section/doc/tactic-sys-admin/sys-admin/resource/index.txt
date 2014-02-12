@@ -45,7 +45,7 @@ the db_resource *my_new_db_resource* has been added to a Project called
 *Testing*.
 
 For a project to become a full TACTIC project (complete with separate
-URL space: http://<server>/<project> and separate themes an interfaces),
+URL space: http://server/project and separate themes an interfaces),
 all that is required is the “config” tables to exist in that database
 resource. Thus a database resource can start off as a data source and
 then, at any time, be upgraded to a full TACTIC project if that is ever

@@ -1,0 +1,148 @@
+TACTIC System Administrator
+===========================
+
+:leveloffset: 0
+
+
+Planning
+~~~~~~~~
+
+:leveloffset: 2
+
+include::../section/doc/tactic-sys-admin/sys-admin/deploy-tactic-scalability-solution/index.txt[]
+
+:leveloffset: 0
+
+
+Install TACTIC Application
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+:leveloffset: 2
+
+include::../section/doc/tactic-sys-admin/sys-admin/install-tactic-general/index.txt[]
+
+include::../section/doc/tactic-sys-admin/sys-admin/install-tactic-centos-5.5/index.txt[]
+
+include::../section/doc/tactic-sys-admin/sys-admin/install-tactic-centos-5.7/index.txt[]
+
+include::../section/doc/tactic-sys-admin/sys-admin/install-tactic-centos-6.2/index.txt[]
+
+include::../section/doc/tactic-sys-admin/sys-admin/install-tactic-windows-server-2008/index.txt[]
+
+include::../section/doc/tactic-sys-admin/sys-admin/install-tactic-fedora-12/index.txt[]
+
+include::../section/doc/tactic-sys-admin/sys-admin/install-tactic-license/index.txt[]
+
+include::../section/doc/tactic-sys-admin/sys-admin/upgrade-tactic/index.txt[]
+
+include::../section/doc/tactic-sys-admin/sys-admin/multiple-tactic-services/index.txt[]
+
+:leveloffset: 0
+
+
+Install Python
+~~~~~~~~~~~~~~
+
+:leveloffset: 2
+
+include::../section/doc/tactic-sys-admin/sys-admin/install-python/index.txt[]
+
+:leveloffset: 0
+
+
+Install Web Server
+~~~~~~~~~~~~~~~~~~
+
+:leveloffset: 2
+
+include::../section/doc/tactic-sys-admin/sys-admin/configure-http/index.txt[]
+
+include::../section/doc/tactic-sys-admin/sys-admin/configure-http-apache/index.txt[]
+
+include::../section/doc/tactic-sys-admin/sys-admin/configure-http-iis-7/index.txt[]
+
+:leveloffset: 0
+
+
+Install Database
+~~~~~~~~~~~~~~~~
+
+:leveloffset: 2
+
+include::../section/doc/tactic-sys-admin/sys-admin/database-configuration/index.txt[]
+
+:leveloffset: 0
+
+
+Database Resources
+~~~~~~~~~~~~~~~~~~
+
+:leveloffset: 2
+
+include::../section/doc/tactic-sys-admin/sys-admin/resource/index.txt[]
+
+:leveloffset: 0
+
+
+Server Configuration
+~~~~~~~~~~~~~~~~~~~~
+
+:leveloffset: 2
+
+include::../section/doc/tactic-sys-admin/sys-admin/deploy-tactic-configuration/index.txt[]
+
+include::../section/doc/tactic-sys-admin/sys-admin/config-tactic/index.txt[]
+
+include::../section/doc/tactic-sys-admin/sys-admin/configure-tactic-service/index.txt[]
+
+include::../section/doc/tactic-sys-admin/sys-admin/configure-ssl/index.txt[]
+
+include::../section/doc/tactic-sys-admin/sys-admin/active-directory/index.txt[]
+
+:leveloffset: 0
+
+
+Fileserver
+~~~~~~~~~~
+
+:leveloffset: 2
+
+include::../section/doc/tactic-sys-admin/sys-admin/relocate-assets-directory/index.txt[]
+
+include::../section/doc/tactic-sys-admin/sys-admin/configure-remote-repo/index.txt[]
+
+:leveloffset: 0
+
+
+Scalability
+~~~~~~~~~~~
+
+:leveloffset: 2
+
+include::../section/doc/tactic-sys-admin/sys-admin/deploy-tactic-scalability-configuration-examples/index.txt[]
+
+include::../section/doc/tactic-sys-admin/sys-admin/load-balancing-tactic/index.txt[]
+
+:leveloffset: 0
+
+
+TACTIC Server VM
+~~~~~~~~~~~~~~~~
+
+:leveloffset: 2
+
+include::../section/doc/tactic-sys-admin/sys-admin/tsi-setup-and-install/index.txt[]
+
+include::../section/doc/tactic-sys-admin/sys-admin/tsi-moving-data/index.txt[]
+
+include::../section/doc/tactic-sys-admin/sys-admin/tsi-troubleshooting/index.txt[]
+
+:leveloffset: 0
+
+
+Client Setup
+~~~~~~~~~~~~
+
+:leveloffset: 2
+
+include::../section/doc/tactic-sys-admin/sys-admin/setup-client-computer/index.txt[]
