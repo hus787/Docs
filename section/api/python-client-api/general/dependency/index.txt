@@ -3,9 +3,9 @@ add_dependency
 
 *add_dependency(snapshot_code, file_path, type='ref')*
 
-*Append a dependency referent to an existing check* - in.
+*Append a dependency referent to an existing check-in*.
 
-All files are uniquely containe by a particular snapshot. Presently,
+All files are uniquely contained by a particular snapshot. Presently,
 
 this method does a reverse lookup by file name. This assumes that
 

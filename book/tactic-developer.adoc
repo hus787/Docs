@@ -51,59 +51,106 @@ Custom Widgets
 
 :leveloffset: 2
 
+include::../section/doc/tactic-developer/developer/tactic-widgets/index.txt[]
+
+include::../section/doc/tactic-developer/developer/custom-layout-editor/index.txt[]
+
+include::../section/doc/tactic-developer/developer/custom-interfaces-in-tactic/index.txt[]
+
+include::../section/doc/tactic-developer/developer/widget-development/index.txt[]
 
 
 :leveloffset: 0
 
-Not Organizaed Yet
-~~~~~~~~~~~~~~~~~~
+Plugins
+~~~~~~~
 
 :leveloffset: 2
 
+include::../section/doc/tactic-developer/developer/plugin-manager-interface/index.txt[]
+
+include::../section/doc/tactic-developer/developer/create-a-plugin/index.txt[]
+
+include::../section/doc/tactic-developer/developer/packaging-a-plugin/index.txt[]
+
+
+:leveloffset: 0
+
+Expression Development
+~~~~~~~~~~~~~~~~~~~~~~~
+
+:leveloffset: 2
 
 include::../section/doc/tactic-developer/developer/using-expressions-in-scripting/index.txt[]
+
+:leveloffset: 0
+
+Validation
+~~~~~~~~~~
+
+:leveloffset: 2
+
+include::../section/doc/tactic-developer/developer/setup-validation/index.txt[]
+
+:leveloffset: 0
+
+Async Loading
+~~~~~~~~~~~~~
+
+:leveloffset: 2
+
+include::../section/doc/tactic-developer/developer/loading/index.txt[]
+
+
+:leveloffset: 0
+
+Messaging
+~~~~~~~~~
+
+:leveloffset: 2
+
+include::../section/doc/tactic-developer/developer/messaging/index.txt[]
+
+:leveloffset: 0
+
+Delivering to Related sObjects
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+:leveloffset: 2
+
+include::../section/doc/tactic-developer/developer/sobjects/index.txt[]
+
+:leveloffset: 0
+
+Not Organized Yet
+~~~~~~~~~~~~~~~~~
+
+:leveloffset: 2
+
 
 include::../section/doc/tactic-developer/developer/plugin-versions/index.txt[]
 
 include::../section/doc/tactic-developer/developer/tactic-checkin-process/index.txt[]
 
-
-
-
-include::../section/doc/tactic-developer/developer/custom-interfaces-in-tactic/index.txt[]
-
-
 include::../section/doc/tactic-developer/developer/setting-up-dev-environment/index.txt[]
-
-include::../section/doc/tactic-developer/developer/packaging-a-plugin/index.txt[]
-
 
 include::../section/doc/tactic-developer/developer/python-trigger-in-tactic-editor-guideline/index.txt[]
 
 include::../section/doc/tactic-developer/developer/naming-convention-classes/index.txt[]
 
-
-include::../section/doc/tactic-developer/developer/create-a-plugin/index.txt[]
-
-include::../section/doc/tactic-developer/developer/widget-development/index.txt[]
-
-include::../section/doc/tactic-developer/developer/custom-layout-editor/index.txt[]
-
 include::../section/doc/tactic-developer/developer/trigger/index.txt[]
-
-include::../section/doc/tactic-developer/developer/plugin-manager-interface/index.txt[]
 
 include::../section/doc/tactic-developer/developer/custom-checkin-pipeline/index.txt[]
 
 include::../section/doc/tactic-developer/developer/client-api-performance/index.txt[]
 
-
-include::../section/doc/tactic-developer/developer/setup-validation/index.txt[]
-
 include::../section/doc/tactic-developer/developer/client-api-hierarchy/index.txt[]
 
+:leveloffset: 0
 
+TACTIC Python Client API Reference
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-include::../section/doc/tactic-developer/developer/tactic-widgets/index.txt[]
+:leveloffset: 2
 
-
+include::tactic-api-python-client-api.adoc[]
