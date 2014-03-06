@@ -321,6 +321,79 @@ in view mode for button widget?
 http://community.southpawtech.com/sites/default/files/doc_tactic-developer_0.pdf
 
 
+
+*Question*: How can you add multiple tabs within a single tab view?
+
+*Answer*: 
+
+1. For class: If you have the view definition in the custom layout editor, then you use tactic.ui.panel.CustomLayoutWdg 
+I think you have the view under the project views which is being drawn by tactic.ui.panel.ViewPanelWdg. 
+It is mentioned as widget_key element ( = view_panel) in the edit sidebar menu option for that view
+
+2.If you want to know the search_type for a view:
+
+a. Go the widget configuration and there is column named search type. You can just filter results for the view you are looking at, in my case my_jobs 
+
+b. Or you can just go to Edit SideBar menu and you will find the search type for the view
+
+A working example:
+
+I have two views my_jobs and view_in_custom_layout_editor .
+
+my_jobs is in the sidebar under project_views(need the search type) and view_in_custom_layout_editor is defined in the custom layout editor under folder named test (don't need a search_type for this)
+
+-------------------------------------------------------------------
+<div>
+<element name="tabs">
+<display class="tactic.ui.container.TabWdg">
+<config>
+<config>
+<element name="View in custom Layout Editor">
+<display class="tactic.ui.panel.CustomLayoutWdg">
+<view>test.view_in_custom_layout_editor </view>
+</display>
+</element>
+<element name="my_jobs">
+<display class="tactic.ui.panel.ViewPanelWdg">
+<search_type>sthpw/task</search_type>
+<simple_search_view>my_jobs_simple_search</simple_search_view>
+<search_type>sthpw/task</search_type>
+<view>my_jobs</view>
+</display>
+</element>
+</config>
+
+</display>
+</element>
+</div>
+-------------------------------------------------------------------
+
+*Question*: Is there any argument that 1. Disables the close tab(x) 2. Disables Add Untitled tab (+) button for a tab? 
+
+*Answer*:
+
+1. Hide the x button to close the tab: 
+<show_remove>false</show_remove>
+2) Hide the + button to add untitled tab (I thought you might want to use it)
+-------------------------
+<show_add>false</show_add>
+--------------------------
+
+However this doesn't prevent the user from right clicking the tab and choosing Close tab/Add Tab option
+
+
+*Question*: Is there any argument to get rid of the menu obtained on right clicking a tab? 
+
+*Answer*:
+To get rid of the menu available on right clicking the tab completely:
+--------------------------------------------
+<show_context_menu>false</show_context_menu>
+--------------------------------------------
+
+But this way, user won't be able to do other things like Reload a tab etc. We don't support removing options individually.
+
+
+
 Expression Related Questions:
 -----------------------------
 
@@ -486,6 +559,40 @@ Tactic Table Related Questions
 1) For the column, Edit the column definition and in the edit tab, un-check edit which will disallow editing in the table and remove the code field from the edit view.
 
 2) If you edit the column definition, in the edit tab make sure the widget is set to TextWdg. Then set the read_only option to true.
+
+
+*Question*: How can you have a select widget in edit mode?
+
+*Answer*:
+To have a select widget in edit mode, set the following fields:
+-----------------------
+Widget: Class Path
+Class Name: SelectWdg
+-----------------------
+
+*Question*: How do you display column_1 values in the select dropdown list but save column_2 values into the db?
+
+*Answer*: Say for example, in the vfx project for sthpw/task view: we want to have asset names related to the parent shot 
+in the dropdown list but save their codes into the database.
+
+Under Edit Mode > Other Options:
+Have
+---------------------------------------------------------------------------
+<values_expr>@GET(vfx/shot.vfx/asset_in_shot.vfx/asset.code)</values_expr>
+<labels_expr>@GET(vfx/shot.vfx/asset_in_shot.vfx/asset.name)</labels_expr>
+----------------------------------------------------------------------------
+Note: After you hit save, the column will show the code of the asset name that was selected.
+
+We can have different column value in the display than the one saved in the database. 
+In our example, we can have asset name displayed after save by modifying the View mode setting:
+
+*In view mode*: 
+----------------------------------------------------------------------------------------
+Widget: Expression
+Expression: @GET(vfx/shot.vfx/asset_in_shot.vfx/asset['code', @GET(.asset_in_shot)].name
+Mode: Relative/Default
+------------------------------------------------------------------------------------------
+Mode is relative because you are grabbing the column value row wise.
 
 
 
