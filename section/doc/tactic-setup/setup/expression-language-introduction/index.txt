@@ -307,6 +307,12 @@ For a file to be named chr001_model.png, we could use:
 language. The presently use a simplified expression language. The plan
 is to merge the two at some point.
 
+To return a combination of several columns from a row in a label expression or otherwise:
+-----------------------------------
+@SUBSTITUTE(%s-%s-%s,@GET(.process),@GET(.status),@GET(.assigned)))
+-----------------------------------
+
+
 *String Formatting*
 
 For string values, the string operator them can use standard print
@@ -370,16 +376,22 @@ $TODAY variable so only 2011-11-11 is displayed
 { $TODAY,|([^\s]+)| }
 ---------------------
 
-The following formats a timestamp by using the new @FORMAT function
+The following formats a timestamp and built-in
+$TODAY variable by using the new @FORMAT function
 
 ----------------------------------------
 @FORMAT( @GET(.timestamp), '31/12/1999')
-        
+@FORMAT(@STRING($TODAY), '31/12/1999')        
 ----------------------------------------
 
 ------------------------------------------
 @FORMAT( @GET(.timestamp), 'Dec 31, 1999')
-    
+@FORMAT(@STRING($TODAY), 'Dec 31, 1999')    
+------------------------------------------
+
+------------------------------------------
+@FORMAT(@STRING($TODAY), 'DATE')
+@FORMAT(@STRING($TODAY), 'DATETIME')
 ------------------------------------------
 
 The following formats it according to a project wide date-time setting

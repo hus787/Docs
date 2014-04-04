@@ -397,19 +397,45 @@ But this way, user won't be able to do other things like Reload a tab etc. We do
 Expression Related Questions:
 -----------------------------
 
+*Question*: How can we find the next dependent task using the script?
+
+*Answer*:
+There is no  expression that can evaluate the next dependent task directly. 
+However, you can use @PYTHON expression in the widget that points to a 
+script_path that uses the API method: 
+
+http://community.southpawtech.com/python-client-api_general_get_pipeline_processes_info.html
+
+get_pipeline_processes_info(search_key, recurse=False, related_process=None)
+
+When you specify a related_process, it will return the input and output processes. Output 
+processes is actually the next process that you are looking for.
 
 *Question*: How to get the project url ex: https://VM_address/tactic/project_name?
 
 *Answer*: *$PROJECT_URL* is a python variable that will be evaluated by the server, so you can this directly.
 
-*Question*: How can we have a combination of several columns from a row as a label expression. 
+*Question*: How can we have a combination of several columns from a row in a label expression or otherwise. 
 
 *Answer*: You can do that by using a single expression(works for both absolute and relative mode and 
 can have as many column values)
-For example: 
-----------------------------------------------------------------
-@SUBSTITUTE((%0.d - %s ….),@GET(table_name/column_name), @GET(table_name/column_name),...)
------------------------------------------------------------------
+
+Example 1: Works for a label expression and otherwise.
+-----------------------------------
+@SUBSTITUTE(%s -%s-%s,@GET(.process),@GET(.status),@GET(.assigned)))
+-----------------------------------
+One can try this in the task table.
+If you have this expression in the expression column, it will display something like
+
+process- status-assigned
+ex:
+Work-Approved-ssmith where work is process, status is Approved and Assigned user is ssmith
+
+Example 2: Works except for the labels expression in the edit column definition:
+------------------
+{@STRING('The color is')} {'light'}-{blue}
+------------------
+The output is _The color is light-blue_.
 
 *Question*: How can you create an expression column that uses the data from the current row and matches this against the full database?
 
@@ -449,13 +475,59 @@ server.get_parent(task.get('__search_key__'))
 Avoid looping to get the list of parents for a task list. Use the previous expression for better speed 
 in this case. This is buggy at the moment and doesn’t work correctly for list of different task sobjects.
 
+*Question*: Is there a way to evaluate what day of the week it is?
+*Answer*: There is no variable defined to find what day is today but you can do something like to if today is a Sunday:
+------------------------------------
+@IF('$TODAY= $THIS_SUNDAY', 'T', 'F')
+------------------------------------
+
 
 
 Tactic UI Related Questions
 -----------------------------
 
+*Question*: How do you find a view in TACTIC?
 
+*Answer*: All the views of the project exist in the widget configuration. Hit 2 and select Widget Config. 
+Now you can search for any view in the widget config tab. Use Advanced Search Filter to filter out the view.
 
+*Question*: How can you filter out the entries permanently from a view?
+
+*Answer*: Say for example, you want to have all results in the view except for cancelled status jobs. Then advanced filter can help you refine your search. This filter removes those results from the view completely. So even if you try to do a simple search for cancelled status you will get 0 results back.
+
+There are two ways you can do this:
+
+1. Using the UI interface. This is relatively easy: 
+
+a. Open the  view  in a tab
+b. Click on View Advanced Search filter as shown in the image
+c. Set the filters and hit search.
+d. Now go to the Gear Menu(More Options). Go to View option in the dropdown and Select Save Current View from the second dropdown.
+
+2. Go to the view in the widget config and update the json: 
+
+a. Open the edit Sidebar menu for the view and obtain the Search View field and search type field
+
+b. Go to the Widget configuration tab, filter out the results for the search view and search type, edit the json and hit save. 
+
+*Question*: How to filter out certain tasks using the task widget? Say for example: You want only Assigned tasks
+
+*Answer*: Since the Tasks column is using FastTableLayoutWdg, it doesn't have a filter option.
+
+Right click on the Tasks column and got to Edit Column Definition.
+In  the edit column definition look for the expression field:
+Subwidget > Display > Expression
+and not
+Widget > Display
+
+and set the expression field to
+--------------------------------------
+@SOBJECT(sthpw/task['status','Assigned']) 
+--------------------------------------
+
+*Note*: The subwidget option is in the Tasks Widget not Task Pipeline widget
+
+This cannot be done for task pipeline widget at the moment. But it might be added in future.
 
 *Question*: How can we get all task search_key using trigger insert|sthpw/task?
 

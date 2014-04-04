@@ -3,6 +3,7 @@ Template Project Creation Best Practices
 
 
 How to create a template project in 3.8.0.rc04 and above.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 *Making a Distributable TACTIC Template Project*
 
@@ -163,3 +164,8 @@ To actually save out the template project zip file
 see an Update button for each project. Clicking on it saves the corresponding project as a template 
 zip file ready to be imported. If there is an existing one, it will be saved over. It is saved 
 in <TACTIC_DATA_DIR>/templates.
+
+Restore a project from Template(zip) backup on a new TACTIC server
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+If you put that zip file you created in another tactic installation and save it in <TACTIC_DATA_DIR>/templates, it should be available as one of the options in the template selection when you create a new project.
