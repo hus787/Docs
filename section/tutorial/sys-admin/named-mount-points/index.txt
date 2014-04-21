@@ -666,13 +666,45 @@ Mode: Relative/Default
 ------------------------------------------------------------------------------------------
 Mode is relative because you are grabbing the column value row wise.
 
+*Question*: Can you perform a simple search on a display column?
 
+*Answer*: No, you can't. You need to have it in the database in order to that.
 
+*Question*: Can you perform Sort (Option when you right click on the column header) on a display column?
+
+*Answer*: Yes, you can. 
+However, if it has a complicated expression for ex: to get the data from different tables, then you can't perform Sort.
+In that case, you will have to insert data in the current table and not just have a display column. 
+Any time the data is added/updated to the table you can have a server trigger. This trigger will then call a script that should add/update the column in the table based on the logic you had in the expression.
+
+*Question*: Is it possible to send notes to other processes in the tasks table?
+
+*Answer*: 
+This won't be possible in Tasks view. Tactic doesn't support that at the moment.
+
+However, there is a workaround.
+
+So, instead of having a My Tasks view for users you can have views like My shot view (parent of task) for the users.
+
+To filter tasks assigned specific to the users, go to Filter(magnifying glass icon) > Children >
+Select task in 1st dropdown, Assigned in 2nd dropdown column, type {$LOGIN} in 3rd field and hit search. Save this current view.
+
+This will filter out the results and display only the shots whose tasks have been assigned to the user.
+
+The notes column will let you pick the process from a dropdown for every note.
+
+However, My Tasks view can get all the tasks assigned to the user but My shot can only get the shot tasks and not Asset tasks. For this, you will have to create multiple views like My Shot view, My Asset view etc.
+
+*Question*: Can you export a view as pdf?
+
+*Answer*:
+Tactic doesn't come with this functionality, but you can always print a page.
+You can also use JavaScript to print an html element of your choosing, so that may be one way to generate PDFs of the cards.
 
 Source Code Related Questions
 -----------------------------
 
-*Question*: Is there a  way to get the immediate dependent task id/s using a task's id?
+*Question*: Is there a  way to get the immediate dependent task id/s using a task id?
 
 *Answer*: Yes
 
